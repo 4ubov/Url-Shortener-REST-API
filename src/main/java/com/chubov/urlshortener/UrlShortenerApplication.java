@@ -1,5 +1,7 @@
 package com.chubov.urlshortener;
 
+import org.apache.commons.validator.routines.UrlValidator;
+import org.hibernate.validator.internal.constraintvalidators.hv.URLValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,5 +17,10 @@ public class UrlShortenerApplication {
 	@Bean
 	public ModelMapper modelMapper(){
 		return new ModelMapper();
+	}
+
+	@Bean
+	public UrlValidator urlValidator(){
+		return new UrlValidator();
 	}
 }

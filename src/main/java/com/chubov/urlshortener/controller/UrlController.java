@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 
 @RestController
@@ -28,7 +29,7 @@ public class UrlController {
 
     @PostMapping("/create-short")
     public String convertToShortUrl(@RequestBody @Valid UrlDto request,
-                                    BindingResult bindingResult) {
+                                    BindingResult bindingResult) throws MalformedURLException {
         if (bindingResult.hasErrors()) {
             throw new RuntimeException();
         }

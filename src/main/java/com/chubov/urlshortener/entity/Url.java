@@ -2,8 +2,6 @@ package com.chubov.urlshortener.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import org.hibernate.annotations.IdGeneratorType;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.Date;
 
@@ -29,7 +27,8 @@ public class Url {
     private Date expiresDate;
 
     //  Constructors
-    public Url(){}
+    public Url() {
+    }
 
     public Url(String longUrl, Date createdAt, Date expiresDate) {
         this.longUrl = longUrl;

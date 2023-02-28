@@ -6,9 +6,9 @@ import com.chubov.urlshortener.repository.UrlRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.auditing.CurrentDateTimeProvider;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -19,17 +19,22 @@ public class UrlService {
     private final BaseConversationService baseConversationService;
     private final ModelMapper modelMapper;
 
+    private final UrlDtoValidatorService urlDtoValidatorService;
+
     @Autowired
-    public UrlService(UrlRepository urlRepository, BaseConversationService baseConversationService, ModelMapper modelMapper) {
+    public UrlService(UrlRepository urlRepository,
+                      BaseConversationService baseConversationService,
+                      ModelMapper modelMapper, UrlDtoValidatorService urlDtoValidatorService) {
         this.urlRepository = urlRepository;
         this.baseConversationService = baseConversationService;
         this.modelMapper = modelMapper;
+        this.urlDtoValidatorService = urlDtoValidatorService;
     }
 
-    public String convertToShortUrl(UrlDto request) {
+    public String convertToShortUrl(UrlDto request) throws MalformedURLException {
         Url url = convertToUrl(request);
         Optional<Url> existUlr = urlRepository.findByLongUrl(url.getLongUrl());
-        if(existUlr.isPresent()){
+        if (existUlr.isPresent()) {
             return baseConversationService.encode(existUlr.get().getId());
         }
 
@@ -50,9 +55,9 @@ public class UrlService {
     public String getOriginalUrl(String shortUrl) {
         Long id = baseConversationService.decode(shortUrl);
         Url url = urlRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("Entity with id: "+id+" is not found!"));
+                .orElseThrow(() -> new EntityNotFoundException("Entity with id: " + id + " is not found!"));
 
-        if (url.getExpiresDate().before(new Date()) && url.getExpiresDate() != null){
+        if (url.getExpiresDate().before(new Date()) && url.getExpiresDate() != null) {
             urlRepository.delete(url);
             throw new EntityNotFoundException("Link expired!");
         }
@@ -62,7 +67,10 @@ public class UrlService {
 
 
     //  ModelMapper methods. Converters.
-    private Url convertToUrl(UrlDto urlDto) {
+    private Url convertToUrl(UrlDto urlDto) throws MalformedURLException {
+        //  Url Validation
+        urlDtoValidatorService.validLongUrlDto(urlDto);
+
         return modelMapper.map(urlDto, Url.class);
     }
 
