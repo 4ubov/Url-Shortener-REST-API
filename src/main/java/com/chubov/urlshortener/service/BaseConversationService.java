@@ -33,7 +33,7 @@ public class BaseConversationService {
 
         long counter = 1;
         for (int i = 0; i < length; i++) {
-            decoded += allowedString.indexOf(characters[i]) * Math.pow(base, length-counter);
+            decoded += allowedString.indexOf(characters[i]) * Math.pow(base, length - counter);
             counter++;
         }
 

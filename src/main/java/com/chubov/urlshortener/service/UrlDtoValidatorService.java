@@ -20,11 +20,10 @@ public class UrlDtoValidatorService {
     public void validLongUrlDto(UrlDto urlDto) throws MalformedURLException {
         urlDto.setLongUrl(urlDto.getLongUrl().trim());
         if (!urlValidator.isValid(urlDto.getLongUrl())) {
-            if(!urlValidator.isValid("http://"+(urlDto.getLongUrl()))){
+            if (!urlValidator.isValid("http://" + (urlDto.getLongUrl()))) {
                 throw new MalformedURLException("We'll need a valid URL, like \"yourbrnd.co/niceurl\"");
-            }
-            else {
-                urlDto.setLongUrl("http://"+urlDto.getLongUrl());
+            } else {
+                urlDto.setLongUrl("http://" + urlDto.getLongUrl());
             }
         }
     }

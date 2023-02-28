@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import java.net.MalformedURLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UrlService {
@@ -20,6 +22,7 @@ public class UrlService {
     private final ModelMapper modelMapper;
 
     private final UrlDtoValidatorService urlDtoValidatorService;
+
 
     @Autowired
     public UrlService(UrlRepository urlRepository,
@@ -30,6 +33,7 @@ public class UrlService {
         this.modelMapper = modelMapper;
         this.urlDtoValidatorService = urlDtoValidatorService;
     }
+
 
     public String convertToShortUrl(UrlDto request) throws MalformedURLException {
         Url url = convertToUrl(request);
@@ -65,6 +69,15 @@ public class UrlService {
         return url.getLongUrl();
     }
 
+    //  Delete all expired urls
+    public void deleteExpiredUrl() {
+        Date now = new Date();
+        Optional<List<Url>> urls = Optional.of(urlRepository.findAll()
+                .stream()
+                .filter(url -> url.getExpiresDate().getTime() < now.getTime())
+                .collect(Collectors.toList()));
+        urls.ifPresent(urlRepository::deleteAll);
+    }
 
     //  ModelMapper methods. Converters.
     private Url convertToUrl(UrlDto urlDto) throws MalformedURLException {
