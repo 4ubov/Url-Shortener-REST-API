@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,33 +31,47 @@ public class UrlService {
         this.urlDtoValidatorService = urlDtoValidatorService;
     }
 
-
     public String convertToShortUrl(UrlDto request) throws MalformedURLException {
         Url url = convertToUrl(request);
         Optional<Url> existUlr = urlRepository.findByLongUrl(url.getLongUrl());
         if (existUlr.isPresent()) {
-            return baseConversationService.encode(existUlr.get().getId());
+            return existUlr.get().getShortUrl();
         }
-
         url.setCreatedAt(new Date());
-        //  Expires after 10 days after adding in db
         Calendar c = Calendar.getInstance();
         c.setTime(url.getCreatedAt());
         c.add(Calendar.DATE, 10);
         url.setExpiresDate(c.getTime());
+        Optional<Url> existUlr3 = urlRepository.findByLongUrl(url.getLongUrl());
+        if (existUlr3.isPresent()) {
+            return existUlr3.get().getShortUrl();
+        }
+        urlRepository.save(url);
+        String shortUrl = baseConversationService.encode(url.getId());
+        Optional<Url> tmpUrl = urlRepository.findByShortUrl(shortUrl);
+        while (tmpUrl.isPresent()) {
+            if (url.getLongUrl().equals(tmpUrl.get().getLongUrl())
+                    &&
+                    !Objects.equals(url.getId(), tmpUrl.get().getId())) {
+                System.out.println("Лонг урл есть в бд скинул шорт:");
+                urlRepository.delete(url);
+                return tmpUrl.get().getShortUrl();
+            }
 
-        Url updatedUrl = urlRepository.save(url);
-
-        String shortUrl = baseConversationService.encode(updatedUrl.getId());
-
+            shortUrl = baseConversationService.encodeWithAnotherSalt(url.getId(), url.getLongUrl());
+            System.out.println("Generated new: " + shortUrl);
+            tmpUrl = (urlRepository.findByShortUrl(shortUrl));
+            System.out.println(tmpUrl);
+        }
+        url.setShortUrl(shortUrl);
+        urlRepository.save(url);
         return shortUrl;
     }
 
     public String getOriginalUrl(String shortUrl) {
-        Long id = baseConversationService.decode(shortUrl);
-        Url url = urlRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Entity with id: " + id + " is not found!"));
-
+        Url url = urlRepository.findByShortUrl(shortUrl)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Etity with this shortUrl: " + shortUrl + " , is not found!"));
         if (url.getExpiresDate().before(new Date()) && url.getExpiresDate() != null) {
             urlRepository.delete(url);
             throw new EntityNotFoundException("Link expired!");
