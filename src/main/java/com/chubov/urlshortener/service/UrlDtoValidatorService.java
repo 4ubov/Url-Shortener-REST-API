@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 
 @Service
 public class UrlDtoValidatorService {
@@ -19,12 +20,17 @@ public class UrlDtoValidatorService {
     //  Validate that Url is correct.
     public void validLongUrlDto(UrlDto urlDto) throws MalformedURLException {
         urlDto.setLongUrl(urlDto.getLongUrl().trim());
+        URL tmp = null;
+        try {
+            tmp = new URL(urlDto.getLongUrl());
+            urlDto.setLongUrl("http://" + tmp.getHost().toLowerCase() + tmp.getFile());
+        } catch (MalformedURLException e) {
+            tmp = new URL("http://" + (urlDto.getLongUrl()));
+            urlDto.setLongUrl(tmp.getProtocol() + "://" + tmp.getHost().toLowerCase() + tmp.getFile());
+        }
+
         if (!urlValidator.isValid(urlDto.getLongUrl())) {
-            if (!urlValidator.isValid("http://" + (urlDto.getLongUrl()))) {
-                throw new MalformedURLException("We'll need a valid URL, like \"yourbrnd.co/niceurl\"");
-            } else {
-                urlDto.setLongUrl("http://" + urlDto.getLongUrl());
-            }
+            throw new MalformedURLException("We'll need a valid URL, like \"yourbrnd.co/niceurl\"");
         }
     }
 }
