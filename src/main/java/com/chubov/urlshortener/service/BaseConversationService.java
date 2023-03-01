@@ -1,5 +1,6 @@
 package com.chubov.urlshortener.service;
 
+import org.hashids.Hashids;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -8,36 +9,29 @@ public class BaseConversationService {
 
     //  Fields
     private static final String allowedString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private char[] allowedCharacters = allowedString.toCharArray();
-    private int base = allowedCharacters.length;
 
-    public String encode(long input) {
-        StringBuilder encodedString = new StringBuilder();
-        if (input == 0) {
-            return String.valueOf(allowedCharacters[0]);
-        }
+    public String encode(Long id) {
+        Hashids hashids = new Hashids("SomeCoolSalt" + id);
+        String encoded = hashids.encode(id);
 
-        while (input > 0) {
-            encodedString.append(allowedCharacters[(int) (input % base)]);
-            input = input / base;
-        }
-
-        return encodedString.reverse().toString();
+        return encoded;
     }
 
-    public long decode(String input) {
-        char[] characters = input.toCharArray();
-        int length = characters.length;
+    public String encodeWithAnotherSalt(Long id, String longUrl) {
+        Hashids hashids = new Hashids("SomeCoolSalt" + id + longUrl);
+        String encoded = hashids.encode(id);
 
-        long decoded = 0;
+        return encoded;
+    }
 
-        long counter = 1;
-        for (int i = 0; i < length; i++) {
-            decoded += allowedString.indexOf(characters[i]) * Math.pow(base, length - counter);
-            counter++;
-        }
+    public long[] decode(Long id, String shortUrl) {
+        Hashids hashids = new Hashids("SomeCoolSalt" + id);
+        return hashids.decode(shortUrl);
+    }
 
-        return decoded;
+    public long[] decodeWithAnotherSalt(Long id, String shortUrl) {
+        Hashids hashids = new Hashids("SomeCoolSalt" + id + shortUrl);
+        return hashids.decode(shortUrl);
     }
 
 }
