@@ -18,6 +18,9 @@ public class Url {
     @NotEmpty(message = "Field - longUrl should not be empty.")
     private String longUrl;
 
+    @Column(name = "short_url")
+    private String shortUrl;
+
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -26,22 +29,26 @@ public class Url {
     @Temporal(TemporalType.TIMESTAMP)
     private Date expiresDate;
 
+
     //  Constructors
     public Url() {
     }
 
-    public Url(String longUrl, Date createdAt, Date expiresDate) {
+    public Url(String longUrl, String shortUrl, Date createdAt, Date expiresDate) {
         this.longUrl = longUrl;
+        this.shortUrl = shortUrl;
         this.createdAt = createdAt;
         this.expiresDate = expiresDate;
     }
 
     //  Getters and Setters
-    public long getId() {
+
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -51,6 +58,14 @@ public class Url {
 
     public void setLongUrl(String longUrl) {
         this.longUrl = longUrl;
+    }
+
+    public String getShortUrl() {
+        return shortUrl;
+    }
+
+    public void setShortUrl(String shortUrl) {
+        this.shortUrl = shortUrl;
     }
 
     public Date getCreatedAt() {
@@ -67,5 +82,16 @@ public class Url {
 
     public void setExpiresDate(Date expiresDate) {
         this.expiresDate = expiresDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Url{" +
+                "id=" + id +
+                ", longUrl='" + longUrl + '\'' +
+                ", shortUrl='" + shortUrl + '\'' +
+                ", createdAt=" + createdAt +
+                ", expiresDate=" + expiresDate +
+                '}';
     }
 }
