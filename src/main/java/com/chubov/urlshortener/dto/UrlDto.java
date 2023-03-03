@@ -1,15 +1,16 @@
 package com.chubov.urlshortener.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 
 public class UrlDto {
     //  Fields
-    @Size(min = 3, message = "size must be min 3")
+    @Size(min = 3, message = "Length of URL, must be greater than 3 character")
     private String longUrl;
 
-    @Size(min = 1, message = "size must be min 1")
+    @Size(min = 1, message = "Length of Short URL, must be greater than 1 character")
     private String shortUrl;
     private Date expiresDate;
 

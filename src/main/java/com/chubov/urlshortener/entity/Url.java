@@ -16,12 +16,12 @@ public class Url {
     private Long id;
 
     @Column(name = "long_url")
-    @NotEmpty(message = "Field - longUrl should not be empty.")
-    @Size(min = 3, message = "size must be min 3")
+    @NotEmpty(message = "Url should not be empty.")
+    @Size(min = 3, message = "Length of URL, must be greater than 3 character")
     private String longUrl;
 
     @Column(name = "short_url")
-    @Size(min = 1, message = "size must be min 1")
+    @Size(min = 1, message = "Length of Short URL, must be greater than 1 character")
     private String shortUrl;
 
     @Column(name = "created_at")

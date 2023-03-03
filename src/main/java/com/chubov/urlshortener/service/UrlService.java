@@ -2,10 +2,13 @@ package com.chubov.urlshortener.service;
 
 import com.chubov.urlshortener.entity.Url;
 import com.chubov.urlshortener.repository.UrlRepository;
+import com.chubov.urlshortener.util.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -68,19 +71,17 @@ public class UrlService {
 
     //  Return longUrl from db is it exist
     public String getOriginalUrl(String shortUrl) {
-        Url url = urlRepository.findByShortUrl(shortUrl)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Etity with this shortUrl: " + shortUrl + " , is not found!",
-                                new EntityNotFoundException("Etity with this shortUrl: " + shortUrl + " , is not found!")));
-        if (url.getExpiresDate().before(new Date()) && url.getExpiresDate() != null) {
-            urlRepository.delete(url);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "Link is expired!",
-                    new EntityNotFoundException("Link is expired!"));
+        Optional<Url> url = urlRepository.findByShortUrl(shortUrl);
+        if (url.isPresent()) {
+            if (url.get().getExpiresDate().before(new Date()) && url.get().getExpiresDate() != null) {
+                urlRepository.delete(url.get());
+                return null;
+            }
+            return url.get().getLongUrl();
         }
-
-        return url.getLongUrl();
+        else {
+            return null;
+        }
     }
 
     //  Delete all expired urls

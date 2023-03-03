@@ -47,12 +47,12 @@ public class UrlController {
                     errorMessage.append(error.getField())
                             .append(" - ")
                             .append(error.getDefaultMessage())
-                            .append("; ");
+                            .append(".");
                 }
                 //  Exception which gets from input url @Valid
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(new ErrorResponse(errorMessage.toString(), System.currentTimeMillis()));
+                return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
+                        errorMessage.toString(), System.currentTimeMillis()),
+                        HttpStatus.BAD_REQUEST);
             }
 
             UrlDto urlDto = convertToUrlDto(urlService.convertToShortUrl(url));
@@ -63,15 +63,21 @@ public class UrlController {
 
         } catch (MalformedURLException exception) {
             //  Exception which gets from UrlDtoValidator (Bad Url Format)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(new ErrorResponse(exception.getMessage(), System.currentTimeMillis()));
+            return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
+                    exception.getMessage(), System.currentTimeMillis()),
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping(value = "/{shortUrl}")
-    public ResponseEntity<Void> redirectToLongUrl(@PathVariable("shortUrl") String shortUrl) {
+    public ResponseEntity<?> redirectToLongUrl(@PathVariable("shortUrl") String shortUrl) {
         String longUrl = urlService.getOriginalUrl(shortUrl);
+        if (longUrl == null) {
+            return new ResponseEntity<>(new ErrorResponse(HttpStatus.NOT_FOUND.value(),
+                    "This shortUrl doesn't exist or his duration was expired",
+                    System.currentTimeMillis()),
+                    HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(longUrl)).build();
     }
 
