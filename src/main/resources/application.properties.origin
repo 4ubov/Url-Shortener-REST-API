@@ -8,3 +8,5 @@ spring.datasource.password=
 spring.jpa.properties.hibernate.dialect=
 spring.jpa.properties.hibernate.show_sql=
 
+# Exception Setting
+server.error.include-message= (set 'always' for including message field in json exception)

@@ -10,6 +10,9 @@ import java.net.URL;
 
 @Service
 public class UrlDtoValidatorService {
+    //  Service for Validating url format.
+
+    //  Fields
     private final UrlValidator urlValidator;
 
     @Autowired
@@ -17,7 +20,7 @@ public class UrlDtoValidatorService {
         this.urlValidator = urlValidator;
     }
 
-    //  Validate that Url is correct.
+    //  Validating that Url is correct.
     public void validLongUrlDto(UrlDto urlDto) throws MalformedURLException {
         urlDto.setLongUrl(urlDto.getLongUrl().trim());
         URL tmp = null;
@@ -25,12 +28,16 @@ public class UrlDtoValidatorService {
             tmp = new URL(urlDto.getLongUrl());
             urlDto.setLongUrl("http://" + tmp.getHost().toLowerCase() + tmp.getFile());
         } catch (MalformedURLException e) {
-            tmp = new URL("http://" + (urlDto.getLongUrl()));
-            urlDto.setLongUrl(tmp.getProtocol() + "://" + tmp.getHost().toLowerCase() + tmp.getFile());
+            try {
+                tmp = new URL("http://" + (urlDto.getLongUrl()));
+                urlDto.setLongUrl(tmp.getProtocol() + "://" + tmp.getHost().toLowerCase() + tmp.getFile());
+            } catch (MalformedURLException exception) {
+                throw new MalformedURLException("We'll need a valid URL, like 'yourbrnd.co/niceurl'");
+            }
         }
 
         if (!urlValidator.isValid(urlDto.getLongUrl())) {
-            throw new MalformedURLException("We'll need a valid URL, like \"yourbrnd.co/niceurl\"");
+            throw new MalformedURLException("We'll need a valid URL, like 'yourbrnd.co/niceurl'");
         }
     }
 }

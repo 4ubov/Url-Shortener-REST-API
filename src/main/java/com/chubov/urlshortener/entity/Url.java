@@ -2,6 +2,7 @@ package com.chubov.urlshortener.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 
@@ -16,9 +17,11 @@ public class Url {
 
     @Column(name = "long_url")
     @NotEmpty(message = "Field - longUrl should not be empty.")
+    @Size(min = 3, message = "size must be min 3")
     private String longUrl;
 
     @Column(name = "short_url")
+    @Size(min = 1, message = "size must be min 1")
     private String shortUrl;
 
     @Column(name = "created_at")
@@ -42,8 +45,6 @@ public class Url {
     }
 
     //  Getters and Setters
-
-
     public Long getId() {
         return id;
     }
@@ -84,6 +85,7 @@ public class Url {
         this.expiresDate = expiresDate;
     }
 
+    //  Overriding methods
     @Override
     public String toString() {
         return "Url{" +

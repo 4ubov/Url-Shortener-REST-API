@@ -5,11 +5,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BaseConversationService {
-    //  This service using for conversation ulr from 10 base to 62 base. (encoding to short link)
+    //  This service using for converting url from 10 base to 62 base. (encoding/decoding to short link)
 
     //  Fields
     private static final String allowedString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+    //  Encoding methods
     public String encode(Long id) {
         Hashids hashids = new Hashids("SomeCoolSalt" + id);
         String encoded = hashids.encode(id);
@@ -24,6 +25,7 @@ public class BaseConversationService {
         return encoded;
     }
 
+    //  Decoding methods
     public long[] decode(Long id, String shortUrl) {
         Hashids hashids = new Hashids("SomeCoolSalt" + id);
         return hashids.decode(shortUrl);

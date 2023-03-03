@@ -15,6 +15,7 @@ public class UrlShortenerApplication {
         SpringApplication.run(UrlShortenerApplication.class, args);
     }
 
+    //  Beans
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
