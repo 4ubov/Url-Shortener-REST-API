@@ -2,15 +2,10 @@ package com.chubov.urlshortener.service;
 
 import com.chubov.urlshortener.entity.Url;
 import com.chubov.urlshortener.repository.UrlRepository;
-import com.chubov.urlshortener.util.ErrorResponse;
-import jakarta.persistence.EntityNotFoundException;
+import com.chubov.urlshortener.util.UrlNotFound;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,17 +65,18 @@ public class UrlService {
     }
 
     //  Return longUrl from db is it exist
-    public String getOriginalUrl(String shortUrl) {
+    public Url getOriginalUrl(String shortUrl) {
         Optional<Url> url = urlRepository.findByShortUrl(shortUrl);
         if (url.isPresent()) {
             if (url.get().getExpiresDate().before(new Date()) && url.get().getExpiresDate() != null) {
                 urlRepository.delete(url.get());
-                return null;
+                //  Exception when url was expired
+                throw new UrlNotFound("This shortUrl doesn't exist or his duration was expired");
             }
-            return url.get().getLongUrl();
-        }
-        else {
-            return null;
+            return url.get();
+        } else {
+            //  Exception when url not found
+            throw new UrlNotFound("This shortUrl doesn't exist or his duration was expired");
         }
     }
 
