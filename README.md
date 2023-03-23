@@ -4,19 +4,23 @@ This API is designed to implement link shortening functionality.
 
 # REST API
 
-## Convert input URL to short format.
+### Request description: Convert input URL to short format.
 
-### Request
+#### Request
 
-`⚪ POST /api/create-short`
+<details>
 
+  <summary>⚪ POST /api/create-short</summary>
+  
+  
     Request body: application/json
     Example value:
       {
         "longUrl": "yourLongURL.com"
       }
       
-### Response
+      
+#### Response
 
     Status code: `201`
     Description: Successfully converted!
@@ -37,17 +41,23 @@ This API is designed to implement link shortening functionality.
         "timestamp": 1679584728598
       }
 
+</details>
 
-## Decode shortUrl to longUrl representation And redirect to longUrl.
+</br>
 
-### Request
+### Request description: Decode shortUrl to longUrl representation And redirect to longUrl.
 
-`⚪ GET /api/{shortUrl}`
+#### Request
+
+<details>
+
+<summary>⚪ GET /api/{shortUrl}</summary>
+
 
     Request body: application/json
     Example value: shortUrl in PathVariable : /api/7LK
       
-### Response
+#### Response
 
     Status code: `302`
     Description: Url successfully found!
@@ -70,26 +80,39 @@ This API is designed to implement link shortening functionality.
           "message": "This shortUrl doesn't exist or his duration was expired",
           "timestamp": 1679587416465
         }
+        
+</details>
 
-## Schemas:
+</br>
 
-### UrlDTO
+### Schemas:
 
-`⚪ longUrl`
+#### `UrlDTO`
+
+<details>
+
+<summary>⚪ longUrl</summary>
 
         type: string
         maxLength: 2147483647
         minLength: 3
 
+</details>
 
-`⚪ shortUrl`
+<details>
+
+<summary>⚪ shortUrl</summary>
 
         type: string
         maxLength: 2147483647
         minLength: 1
 
+</details>
 
-`⚪ expiresDate`
+<details>
+
+<summary>⚪ expiresDate</summary>
 
         type: string($date-time)
 
+</details>
