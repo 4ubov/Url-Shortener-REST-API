@@ -1,6 +1,15 @@
 # URL-Shortener REST-API
 
-This API is designed to implement link shortening functionality.
+##### This API is designed to implement link shortening functionality.
+
+If you're have a URl like this - someLongUrl.subLinkOnHost.mail.com/index.html
+
+This Api can make it to this - localhost://8080/7KX 
+
+If you're have server with domain - short.com It will be looks like - short.com/7KX
+
+someLongUrl.subLinkOnHost.mail.com/index.html  --->  short.com/7KX
+
 
 # REST API
 
@@ -118,6 +127,13 @@ This API is designed to implement link shortening functionality.
 </details>
 
 </br>
+
+### UrlShortener DataBase
+
+#### PostgreSQL code: <a href="https://github.com/4ubov/Url-Shortener-REST-API/blob/master/src/main/resources/url_shortener_db.sql">Link</a>
+![image](https://user-images.githubusercontent.com/46792640/227319259-f43cd17a-f61a-4545-a3b4-dfda5ef132f4.png)
+
+
 </br>
 
 ### Client side on React js, that implements this REST-API - <a href="https://github.com/4ubov/React-Client-URl-Shortener-API">ReactJs-Client</a>
