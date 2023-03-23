@@ -5,6 +5,10 @@ import com.chubov.urlshortener.entity.Url;
 import com.chubov.urlshortener.service.UrlDtoValidatorService;
 import com.chubov.urlshortener.service.UrlService;
 import com.chubov.urlshortener.util.BadUrlException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +19,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -34,10 +40,56 @@ public class UrlController {
     }
 
     @PostMapping("/create-short")
+    @Operation(
+            description = "Convert input URL to short format.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Successfully converted!",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "{\"shortUrl\": \"7LK\"}"
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request!",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "{\n" +
+                                                            "    \"statusCode\": 400,\n" +
+                                                            "    \"message\": \"We'll need a valid URL, like 'yourbrnd.co/niceurl'\",\n" +
+                                                            "    \"timestamp\": 1679584728598\n" +
+                                                            "}"
+                                            )
+                                    }
+                            )
+                    )
+            }
+    )
     @ResponseStatus(HttpStatus.CREATED)
-    public String convertToShortUrl(@RequestBody @Valid UrlDto request,
-                                    BindingResult bindingResult) {
-
+    @ResponseBody
+    public Map<String, String> convertToShortUrl(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "{\n" +
+                                                    "    \"longUrl\":\"yourLongURL.com\"\n" +
+                                                    "}"
+                                    )
+                            }
+                    )
+            )
+            @RequestBody @Valid UrlDto request,
+            BindingResult bindingResult) {
         Url url = convertToUrl(request);
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder();
@@ -54,11 +106,47 @@ public class UrlController {
 
         UrlDto urlDto = convertToUrlDto(urlService.convertToShortUrl(url));
         //  Created (status code: 201)
-        return urlDto.getShortUrl();
+        Map<String, String> response = new HashMap<>();
+        response.put("shortUrl", urlDto.getShortUrl());
+        return response;
 
     }
 
     @GetMapping(value = "/{shortUrl}")
+    @Operation(
+            description = "Encode shortUrl to longUrl representation And redirect to longUrl.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "302",
+                            description = "Url successfully found!",
+                            content = @Content(
+                                    mediaType = "application/http",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "\"redirect : http://yourLongURL.com\"" +
+                                                            "\n<html>...</html>"
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found!",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "{\n" +
+                                                            "  \"statusCode\": 404,\n" +
+                                                            "  \"message\": \"This shortUrl doesn't exist or his duration was expired\",\n" +
+                                                            "  \"timestamp\": 1679587416465\n" +
+                                                            "}"
+                                            )
+                                    }
+                            )
+                    )
+            }
+    )
     public ResponseEntity<Url> redirectToLongUrl(@PathVariable("shortUrl") String shortUrl) {
         Url url = urlService.getOriginalUrl(shortUrl);
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(url.getLongUrl())).build();
