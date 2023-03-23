@@ -118,5 +118,6 @@ This API is designed to implement link shortening functionality.
 </details>
 
 </br>
+</br>
 
 ### Client side on React js, that implements this REST-API - <a href="https://github.com/4ubov/React-Client-URl-Shortener-API">ReactJs-Client</a>
