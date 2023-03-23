@@ -60,7 +60,7 @@ This API is designed to implement link shortening functionality.
 #### Response
 
     Status code: `302`
-    Description: Url successfully found!
+    Description: Url successfully found! As a result of sending this request, you will be redirected to http://yourLongUrl.com
     Media type: application/http
     Example value:
       "redirect : http://yourLongURL.com"
