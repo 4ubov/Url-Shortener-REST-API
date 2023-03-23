@@ -114,7 +114,7 @@ public class UrlController {
 
     @GetMapping(value = "/{shortUrl}")
     @Operation(
-            description = "Encode shortUrl to longUrl representation And redirect to longUrl.",
+            description = "Decode shortUrl to longUrl representation And redirect to longUrl.",
             responses = {
                     @ApiResponse(
                             responseCode = "302",
