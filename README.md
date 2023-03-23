@@ -8,7 +8,8 @@ This API is designed to implement link shortening functionality.
 
 ### Request
 
-`POST /api/create-short`
+`⚪ POST /api/create-short`
+
     Request body: application/json
     Example value:
       {
@@ -41,7 +42,8 @@ This API is designed to implement link shortening functionality.
 
 ### Request
 
-`GET /api/{shortUrl}`
+`⚪ GET /api/{shortUrl}`
+
     Request body: application/json
     Example value: shortUrl in PathVariable : /api/7LK
       
@@ -69,4 +71,25 @@ This API is designed to implement link shortening functionality.
           "timestamp": 1679587416465
         }
 
+## Schemas:
+
+### UrlDTO
+
+`⚪ longUrl`
+
+        type: string
+        maxLength: 2147483647
+        minLength: 3
+
+
+`⚪ shortUrl`
+
+        type: string
+        maxLength: 2147483647
+        minLength: 1
+
+
+`⚪ expiresDate`
+
+        type: string($date-time)
 
