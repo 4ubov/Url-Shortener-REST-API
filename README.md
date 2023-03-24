@@ -4,7 +4,7 @@
 
 If you're have a URl like this - someLongUrl.subLinkOnHost.mail.com/index.html
 
-This Api can make it to this - localhost://8080/7KX 
+This API can make it to this - localhost:8080/7KX 
 
 If you're have server with domain - short.com It will be looks like - short.com/7KX
 
