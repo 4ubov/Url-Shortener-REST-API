@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
 public class UrlController {
     private final UrlService urlService;
     private final UrlDtoValidatorService urlDtoValidatorService;
@@ -39,7 +38,7 @@ public class UrlController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/create-short")
+    @PostMapping("/api/create-short")
     @Operation(
             description = "Convert input URL to short format.",
             responses = {
@@ -112,13 +111,57 @@ public class UrlController {
 
     }
 
+    @GetMapping(value = "/api/get-long/{shortUrl}")
+    @Operation(
+            description = "Decode shortUrl into longUrl representation.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Url successfully found!",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = """
+                                                            {
+                                                                "longUrl":"yourLongURL.com"
+                                                            }"""
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found!",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "{\n" +
+                                                            "  \"statusCode\": 404,\n" +
+                                                            "  \"message\": \"This shortUrl doesn't exist or his duration was expired\",\n" +
+                                                            "  \"timestamp\": 1679587416465\n" +
+                                                            "}"
+                                            )
+                                    }
+                            )
+                    )
+            }
+    )
+    public Map<String, String> getLongUrl(@PathVariable("shortUrl") String shortUrl) {
+        Url url = urlService.getOriginalUrl(shortUrl);
+        Map<String, String> response = new HashMap<>();
+        response.put("longUrl", url.getLongUrl());
+        return response;
+    }
+
     @GetMapping(value = "/{shortUrl}")
     @Operation(
-            description = "Decode shortUrl to longUrl representation And redirect to longUrl.",
+            description = "Redirect to Long Url by shortUrl",
             responses = {
                     @ApiResponse(
                             responseCode = "302",
-                            description = "Url successfully found!",
+                            description = "Url successfully found and redirected!",
                             content = @Content(
                                     mediaType = "application/http",
                                     examples = {
