@@ -15,12 +15,11 @@ someLongUrl.subLinkOnHost.mail.com/index.html  --->  short.com/7KX
 
 ### Request description: Convert input URL to short format.
 
-#### Request
-
 <details>
 
   <summary>⚪ POST /api/create-short</summary>
   
+#### Request
   
     Request body: application/json
     Example value:
@@ -31,16 +30,15 @@ someLongUrl.subLinkOnHost.mail.com/index.html  --->  short.com/7KX
       
 #### Response
 
-    Status code: `201`
+  ###### Status code: `201`
     Description: Successfully converted!
     Media type: application/json
     Example value:
       {
         "shortUrl": "7LK"
       }
-      
-      
-    Status code: `400`
+  
+  ###### Status code: `400`
     Description: Bad Request!
     Media type: application/json
     Example value:
@@ -56,19 +54,18 @@ someLongUrl.subLinkOnHost.mail.com/index.html  --->  short.com/7KX
 
 ### Request description: Decode shortUrl to longUrl representation And redirect to longUrl.
 
-#### Request
-
 <details>
 
 <summary>⚪ GET /api/{shortUrl}</summary>
 
+#### Request
 
     Request body: application/json
     Example value: shortUrl in PathVariable : /api/7LK
       
 #### Response
 
-    Status code: `302`
+  ###### Status code: `302`
     Description: Url successfully found! As a result of sending this request, you will be redirected to http://yourLongUrl.com
     Media type: application/http
     Example value:
@@ -80,7 +77,7 @@ someLongUrl.subLinkOnHost.mail.com/index.html  --->  short.com/7KX
        </html>
        
        
-      Status code: `404`
+   ###### Status code: `404`
       Description: Url not Found!
       Media type: application/json
       Example value:
