@@ -4,11 +4,11 @@
 
 If you're have a URl like this - someLongUrl.subLinkOnHost.mail.com/index.html
 
-This API can make it to this - localhost:8080/api/7KX 
+This API can make it to this - localhost:8080/7KX 
 
-If you're have server with domain - short.com It will be looks like - short.com/api/7KX
+If you're have server with domain - short.com It will be looks like - short.com/7KX
 
-someLongUrl.subLinkOnHost.mail.com/index.html  --->  short.com/api/7KX
+someLongUrl.subLinkOnHost.mail.com/index.html  --->  short.com/7KX
 
 
 # REST API
